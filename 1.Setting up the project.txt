@@ -1,0 +1,32 @@
+# Project Setup Summary
+
+## Part 1: Setting up the project
+
+1. **Folder Structure and Dependencies**
+    - Created `frontend` and `backend` folders.
+    - Installed necessary dependencies for both frontend and backend.
+
+2. **Backend Setup**
+    - Set up an Express server in the backend running on port 3000.
+    - Created an API endpoint at `api/v1/ping` which responds with a message "pong".
+
+3. **Frontend Setup**
+    - Used Axios in the frontend to make requests to the backend server.
+    - Implemented caching functionalities using React Query (TanStack Query) in `main.jsx`:
+      - Set up `QueryClientProvider` with `queryClient`.
+      - Used the `useQuery` hook to manage `isLoading`, `data`, and `error` states.
+    - In `App.jsx`, implemented caching with `staleTime` and `cacheTime` to understand their applications.
+
+4. **Testing and Output**
+    - Simulated a slow network (3G) to observe the loading state.
+    - Created a toggle button to cache the response message for 10 seconds. This allows the response to be retrieved from the cache instead of hitting the API endpoint again.
+
+## Part 2: Concepts Encountered
+
+1. **TanStack Query Installation and Application**
+    - **StaleTime**: The duration until a query transitions from fresh to stale. While fresh, data is read from the cache only, with no network requests. When stale, data is still read from the cache, but a background refetch can occur under certain conditions.
+    - **CacheTime**: The duration until inactive queries are removed from the cache. Defaults to 5 minutes. Queries become inactive when no components are observing them (i.e., all components using the query have unmounted).
+
+2. **HTTP Requests in React**
+    - **Fetch API**: Built-in browser method for making HTTP requests.
+    - **Axios**: A third-party library for making HTTP requests, offering additional features over the Fetch API.
