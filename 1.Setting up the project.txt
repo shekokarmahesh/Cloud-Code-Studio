@@ -21,6 +21,9 @@
     - Simulated a slow network (3G) to observe the loading state.
     - Created a toggle button to cache the response message for 10 seconds. This allows the response to be retrieved from the cache instead of hitting the API endpoint again.
 
+5. **Component Structure**
+    - Followed the atomic model of components: atoms, molecules, and organisms, in increasing order of complexity.
+
 ## Part 2: Concepts Encountered
 
 1. **TanStack Query Installation and Application**
