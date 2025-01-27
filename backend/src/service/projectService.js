@@ -22,8 +22,12 @@ export const createProjectService = async () => {
     return projectId;
 }
 
+// Export an asynchronous function to get the project tree structure based on the project ID
 export const getProjectTreeService = async (projectId) => {
+    // Resolve the project path using the provided project ID
     const projectPath = path.resolve(`./projects/${projectId}`);
+    // Get the directory tree structure of the resolved project path
     const tree = directoryTree(projectPath);
+    // Return the directory tree structure
     return tree;
 }

@@ -1,0 +1,2 @@
+First 5 min summarize what we have done until now and what we will do to proceed forward
+at 1:17:50 explaination of exact;y how we have made treenode structure using recssion
