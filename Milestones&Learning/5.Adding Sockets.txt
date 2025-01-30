@@ -1,0 +1,11 @@
+first 15-20 min revison of last part and brief explainign of how to setup socket.io
+explainig 3 way handshake in websockets
+moving forward
+namespaces in socket.io at the same time you have to make 2 connection with the server example one for the code editor and one for the terminal so usining namespaces it gets handled using single websockets 
+define namespaces in socket.io and how to setup it
+io.of use
+logically segregate your logically
+used chikidar npm package
+it is simple file watching library
+it is used to watch the file and emit the event when the file is changed
+
