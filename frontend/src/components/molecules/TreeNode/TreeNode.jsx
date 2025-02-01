@@ -2,7 +2,7 @@ import { IoIosArrowForward,IoIosArrowDown } from "react-icons/io";
 import { useState } from "react";
 import { FileIcon } from "../../atoms/Fileicon/Fileicon";
 import { useEditorSocketStore } from "../../../store/editorSocketStore";
-
+import { useFileContextMenuStore } from "../../../store/fileContextMenuStore";
 
 export const TreeNode = ({
     fileFolderData
@@ -11,6 +11,14 @@ export const TreeNode = ({
     const [visibility, setVisibility] = useState({});
 
     const {editorSocket} = useEditorSocketStore();
+
+    const {
+        setFile,
+        setIsOpen: setFileContextMenuIsOpen,
+        setX: setFileContextMenuX,
+        setY: setFileContextMenuY
+
+    } = useFileContextMenuStore();
 
     function toggleVisibility(name){
         setVisibility({
@@ -31,6 +39,17 @@ export const TreeNode = ({
         });
     }
 
+    function handleContextMenuForFiles(e, path){
+        e.preventDefault();
+        console.log("Right Clicked on ", path);
+        setFile(path);
+        setFileContextMenuX(e.clientX);
+        setFileContextMenuY(e.clientY);
+        setFileContextMenuIsOpen(true);
+
+
+    }
+
     return (
         <div>
             {fileFolderData && 
@@ -49,8 +68,9 @@ export const TreeNode = ({
                                 outline: "none",
                                 color: "white",
                                 backgroundColor: "transparent",
-                                paddingTop: "15px",
-                                fontSize: "16px"
+                                padding: "15px",
+                                fontSize: "16px",
+                                marginTop: "10px"
 
                             }}
                             >
@@ -63,14 +83,18 @@ export const TreeNode = ({
                         {/* issue faced missed () after computeExtension */}
                         <p
                         style={{
-                            paddingTop: "3.5px",
-                            cursor: "pointer",
+                            paddingTop: "15px",
+                            paddingBottom: "15px",
+                            marginTop: "8px",
                             fontSize: "15px",
-                            marginLeft: "5px",
+                            cursor: "pointer",
+                            marginLeft: "18px",
                             // color: "black"
                         }}
 
-                         onClick={() => handleDoubleClick(fileFolderData)}
+                        onContextMenu={(e) => handleContextMenuForFiles(e, fileFolderData.path)}
+
+                        onClick={() => handleDoubleClick(fileFolderData)}
                         
                         >
                             {fileFolderData.name}

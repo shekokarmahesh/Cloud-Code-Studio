@@ -5,7 +5,7 @@ namespaces in socket.io at the same time you have to make 2 connection with the 
 define namespaces in socket.io and how to setup it
 io.of use
 logically segregate your logically
-used chikidar npm package
+used chokidar npm package
 it is simple file watching library
 it is used to watch the file and emit the event when the file is changed
 

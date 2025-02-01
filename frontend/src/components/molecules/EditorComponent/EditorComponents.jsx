@@ -2,6 +2,7 @@ import Editor from '@monaco-editor/react';
 import { useEffect, useState } from 'react';
 import { useEditorSocketStore } from '../../../store/editorSocketStore';
 import { useActiveFileTabStore } from '../../../store/activeFileTabStore';
+import { extensionToFileType } from '../../../utils/extensionToFileType';
 
 export const EditorComponent = () => {
 
@@ -9,8 +10,9 @@ export const EditorComponent = () => {
         theme: null
     });
 
-    const { editorSocket } = useEditorSocketStore();
-    const { activeFileTab, setActiveFileTab } = useActiveFileTabStore();
+    let timerId = null;
+    const {editorSocket} = useEditorSocketStore();
+    const { activeFileTab } = useActiveFileTabStore();
 
     async function downloadTheme() {
         const response = await fetch('/Dracula.json');
@@ -24,10 +26,31 @@ export const EditorComponent = () => {
         monaco.editor.setTheme('dracula');
     }
 
-    editorSocket?.on("readFileSuccess", (data) => {
-        console.log("Read file success", data);
-        setActiveFileTab(data.path, data.value);
-    })
+    function handleChange(value) {
+        //clear old timer
+        
+        if (timerId) {
+            clearTimeout(timerId);
+        }
+       timerId = setTimeout(() => {
+            const editorContent = value;
+            console.log("sending write file");
+            editorSocket.emit("writeFile", {
+                data: editorContent,
+                pathToFileorFolder: activeFileTab.path
+            });
+        }, 2000);
+    }
+
+            
+    
+
+    // editorSocket?.on("readFileSuccess", (data) => {
+    //     console.log("Read file success", data);
+    //     setActiveFileTab(data.path, data.value);
+    // })
+
+    //to make this component more clean we have separetededitorSocket to editorSocketStore (zustand store)
 
     useEffect(() => {
         downloadTheme();
@@ -39,12 +62,14 @@ export const EditorComponent = () => {
                 <Editor 
                     height={'100vh'}
                     width={'100%'}
-                    defaultLanguage={undefined}
+                    defaultLanguage={ undefined }
                     defaultValue='// Welcome to the playground'
                     options={{
                         fontSize: 18,
                         fontFamily: 'monospace'
                     }}
+                    language={extensionToFileType(activeFileTab?.extension)}
+                    onChange={handleChange}
                     value={activeFileTab?.value ? activeFileTab.value : '// Welcome to the playground'}
 
                     onMount={handleEditorTheme}

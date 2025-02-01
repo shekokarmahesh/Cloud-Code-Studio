@@ -1,0 +1,94 @@
+### Summary of Discussion:
+
+**Issue:**
+- The WebSocket connection in the `ProjectPlayground` component gets disconnected and reconnected unnecessarily when a file is written or modified, causing the component to unmount and remount.
+
+**Solution:**
+- Use `useRef` to store the WebSocket connection, ensuring it persists across re-renders.
+- Initialize the WebSocket connection conditionally to prevent multiple connections.
+- Ensure proper cleanup of the WebSocket connection on component unmount.
+
+**Enhanced Code:**
+```jsx
+import { useParams } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { EditorComponent } from "../src/components/molecules/EditorComponent/EditorComponents";
+import { EditorButton } from "../src/components/atoms/EditorButton/EditorButton";
+import { TreeStructure } from "../src/components/organisms/TreeStructure";
+import { useTreeStructureStore } from "../src/store/treeStructureStore";
+import { useEditorSocketStore } from "../src/store/editorSocketStore";
+import { io } from 'socket.io-client';
+
+export const ProjectPlayground = () => {
+    const { projectId: projectIdFromUrl } = useParams();
+    const { setProjectId, projectId } = useTreeStructureStore();
+    const { setEditorSocket } = useEditorSocketStore();
+    const socketRef = useRef(null);
+
+    useEffect(() => {
+        if (projectIdFromUrl) {
+            setProjectId(projectIdFromUrl);
+
+            if (!socketRef.current) {
+                const editorSocketConn = io(`${import.meta.env.VITE_BACKEND_URL}/editor`, {
+                    query: { projectId: projectIdFromUrl },
+                    transports: ["websocket"],
+                });
+
+                editorSocketConn.on("connect", () => {
+                    console.log("✅ WebSocket connected successfully!");
+                });
+
+                editorSocketConn.on("connect_error", (error) => {
+                    console.error("❌ WebSocket connection error:", error);
+                });
+
+                editorSocketConn.on("disconnect", () => {
+                    console.log("🚫 WebSocket disconnected!");
+                });
+
+                socketRef.current = editorSocketConn;
+                setEditorSocket(editorSocketConn);
+            }
+
+            return () => {
+                if (socketRef.current) {
+                    socketRef.current.disconnect();
+                    socketRef.current = null;
+                }
+            };
+        }
+    }, [projectIdFromUrl, setProjectId, setEditorSocket]);
+
+    return (
+        <>
+            <div style={{ display: 'flex' }}>
+                {projectId && (
+                    <div
+                        style={{
+                            backgroundColor: '#333254',
+                            paddingRight: '10px',
+                            paddingTop: '0.3vh',
+                            minWidth: '250px',
+                            maxWidth: '25%',
+                            height: '99.7vh',
+                            overflow: 'auto',
+                        }}
+                    >
+                        <TreeStructure />
+                    </div>
+                )}
+                <EditorComponent />
+            </div>
+            <EditorButton isActive={true} />
+            <EditorButton isActive={false} />
+            <EditorButton isActive={false} />
+        </>
+    );
+};
+```
+
+**Key Points:**
+- Use `useRef` to maintain the WebSocket connection across re-renders.
+- Initialize the WebSocket connection only if it is not already established.
+- Properly clean up the WebSocket connection on component unmount to avoid lingering connections.

@@ -1,0 +1,19 @@
+priority 1
+need to make similar context option for folder
+1.delete folder
+2.create folder
+3.create file
+
+//todo
+priority 2
+additional implement ctrl c and ctrl v in the document
+
+
+priority 3
+implement rooms 
+
+
+//kya isko apne server par run kare 
+user can do wrong coding like fork bomb to destroy our server
+like fork bomb creates infinite processess and processess are run in RAM ultimately your RAM will get full
+and your device will throttle and finally crash.
