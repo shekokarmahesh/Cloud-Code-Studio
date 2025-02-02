@@ -48,12 +48,15 @@ export const BrowserTerminal = () => {
         });
 
         socket.current.on("shell-output", (data) => {
-            term.write(data);
+            term.write(data); // write data to terminal
+            
+
+            
         });
 
         term.onData((data) => {
             console.log(data);
-            socket.current.emit("shell-input", data);
+            socket.current.emit("shell-input", data);// send data to server
         });
 
         return () => {
