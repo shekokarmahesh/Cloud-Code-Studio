@@ -7,6 +7,7 @@ import {createServer} from 'node:http';
 import chokidar from 'chokidar';
 import { handleEditorSocketEvents } from './socketHandlers/editorHandler.js';
 import fs from 'fs';
+import { handleContainerCreate } from './containers/handleContainerCreate.js';
 
 const app = express();
 const server = createServer(app);
@@ -30,6 +31,27 @@ app.get('/ping', (req, res) => {
 });
 
 const editorNamespace = io.of('/editor');
+
+const terminalNamespace = io.of('/terminal');
+
+
+terminalNamespace.on("connection", (socket) => {
+    let projectId = socket.handshake.query['projectId'];
+    console.log("🔗 Client connected to /terminal namespace");
+
+    socket.on("shell-input", (data) => {
+        console.log("🚀 Received shell input:", data);
+        terminalNamespace.emit("shell-output", data);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("🚫 Client disconnected from /terminal namespace");
+    });
+    handleContainerCreate(projectId, socket );
+
+});
+
+
 
 editorNamespace.on("connection", (socket) => {
     console.log("🔗 Client connected to /editor namespace");
@@ -67,7 +89,7 @@ editorNamespace.on("connection", (socket) => {
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    // console.log(process.cwd())
+    console.log(process.cwd());
 });
 
 // The http module in Node.js creates a common server object with the capabilities of an Express app. 
