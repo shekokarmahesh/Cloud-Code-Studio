@@ -1,0 +1,21 @@
+socket.io is a normal wrapper layer that works on websockets
+currently in our project what is happening that the output of terminal is displayed in our browser terminal we can't execute our command
+all terminal Namespace implementation we will be doing by raw websockets instead of socket.io
+
+
+RUN this command in backend to build docker image "docker build -t sandbox ."
+
+when we use socket.io we get an io object and that object is given a VITE_BACKEND_URL this url is http.... this is http based and http is different from websocket 
+so basically socket.io first setup http connection and then upgrade it to websocket connection that is based on TCP connection this upgrade step is hide by socket.io for us so we need to understand it
+as we are using raw web sockets to we need to execute this steps manually
+
+
+use command npm run dev -- --host 0.0.0.0 in browser terminal to run the react project
+and in browser open localhost:"port of the container that is randomly exposed"
+you can get that port no. in backend console 
+
+
+one issue is pending to be resolved that when create a project the ws connection doesn't get's setup up as the docker container gets timeout to get started
+and this result to not setting up of websocket connection for the first time but when you refresh the container is created instantly and websockets connection is formed
+this issue is pending to be resolved
+*/

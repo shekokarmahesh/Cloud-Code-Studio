@@ -7,6 +7,7 @@ import { useTreeStructureStore } from "../src/store/treeStructureStore";
 import { useEditorSocketStore } from "../src/store/editorSocketStore";
 import {io} from 'socket.io-client'
 import { BrowserTerminal } from "../src/components/molecules/BrowserTerminal/BrowserTerminal";
+import { useTerminalSocketStore } from "../src/store/terminalSocketStore";
 
 export const ProjectPlayground = () => {
 
@@ -14,7 +15,13 @@ const {projectId:projectIdFromUrl} = useParams()
 
     const {setProjectId, projectId} = useTreeStructureStore();
 
-    const {setEditorSocket} = useEditorSocketStore(); 
+    const {setEditorSocket, editorSocket} = useEditorSocketStore(); 
+    // const {terminalSocket} = useTerminalSocketStore();
+    
+    function fetchPort(){
+        editorSocket.emit("getPort");
+
+    }
 
     useEffect(() => {
         if (projectIdFromUrl) {
@@ -73,6 +80,11 @@ const {projectId:projectIdFromUrl} = useParams()
             <EditorButton isActive={true}/> 
             <EditorButton isActive={false}/>
             <EditorButton isActive={false}/> 
+            <div>
+                <button onClick={fetchPort}>
+                    getPort
+                </button>
+            </div>
             <div>
                 <BrowserTerminal/>
             </div>
