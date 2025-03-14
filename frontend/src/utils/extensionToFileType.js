@@ -7,14 +7,13 @@ const extensionToTypeMap = {
     'css': 'css',
     'md': 'markdown',
     'json': 'json',
-    'txt': 'plaintext',
     'yaml': 'yaml',
     'yml': 'yaml',
     'svg': 'svg',
-};
+}
 
 export const extensionToFileType = (extension) => {
-    if (!extension) return undefined;
+    if(!extension) return undefined;
     console.log(extensionToTypeMap[extension]);
     return extensionToTypeMap[extension];
 }

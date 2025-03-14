@@ -1,102 +1,67 @@
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
-import "@xterm/xterm/css/xterm.css";
+import "@xterm/xterm/css/xterm.css"; // required styles
 import { useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import { AttachAddon } from '@xterm/addon-attach';
+import { useTerminalSocketStore } from '../../../store/terminalSocketStore';
 
 export const BrowserTerminal = () => {
+
     const terminalRef = useRef(null);
-    const socket = useRef(null);
-    const { projectId: projectIdFromUrl } = useParams();
+    // const socket = useRef(null);
+    // const {projectId: projectIdFromUrl } = useParams();
+
+    const { terminalSocket } = useTerminalSocketStore();
     
 
-    useEffect(() => {              
-        if (!terminalRef.current) return;
-
+    useEffect(() => {
         const term = new Terminal({
             cursorBlink: true,
             theme: {
-                background: "#1e1e2e",
+                background: "#282a37",
                 foreground: "#f8f8f3",
                 cursor: "#f8f8f3",
-                red: "#ff5555",
+                cursorAccent: "#282a37",
+                red: "#ff5544",
                 green: "#50fa7c",
                 yellow: "#f1fa8c",
                 cyan: "#8be9fd",
             },
             fontSize: 16,
-            fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+            fontFamily: "Fira Code",
+            convertEol: true, // convert CRLF to LF
         });
 
         term.open(terminalRef.current);
-        const fitAddon = new FitAddon();
+        let fitAddon = new FitAddon();
         term.loadAddon(fitAddon);
         fitAddon.fit();
 
-        /// Resize terminal on window resize  
-        const handleResize = () => fitAddon.fit();
-        window.addEventListener("resize", handleResize);
-
-        const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-        const wsURL = `${wsProtocol}://localhost:3000/terminal?projectId=${projectIdFromUrl}`;
-
-        console.log("Attempting WebSocket connection:", wsURL);
-
-        let attempts = 0;
-        const maxAttempts = 10;
-        const retryInterval = 1000; // 1 second
-
-        function connectWebSocket() {
-            if (attempts >= maxAttempts) {
-                console.error("❌ Max WebSocket connection attempts reached.");
-                return;
-            }
-
-            attempts++;
-            console.log(`🔄 WebSocket attempt ${attempts}/${maxAttempts}`);
-
-            const ws = new WebSocket(wsURL);
-
-            ws.onopen = () => {
-                console.log("✅ WebSocket connected!");
-                const attachAddon = new AttachAddon(ws);
+        if(terminalSocket) {
+            terminalSocket.onopen = () => {
+                const attachAddon = new AttachAddon(terminalSocket);
                 term.loadAddon(attachAddon);
-                socket.current = ws;
-            };
-
-            ws.onerror = () => {
-                console.error("❌ WebSocket connection failed. Retrying...");
-                setTimeout(connectWebSocket, retryInterval);
-            };
-
-            ws.onclose = () => console.log("🔌 WebSocket Disconnected");
+                // socket.current = ws;
+            }
         }
 
-        connectWebSocket();
 
         return () => {
             term.dispose();
-            if (socket.current) {
-                socket.current.close();
-            }
-            window.removeEventListener("resize", handleResize);
-        };
-    }, [projectIdFromUrl]);
+            terminalSocket?.close();
+        }
+    }, [terminalSocket])
 
     return (
         <div
             ref={terminalRef}
             style={{
-                width: "100vw", // Full width
-                height: "30vh", // Fixed height
-                borderRadius: "10px",
-                padding: "10px",
-                backgroundColor: "#1e1e2e",
-                color: "#f8f8f3",
+                width: "100vw",
             }}
-            className="terminal"
+            className='terminal'
             id="terminal-container"
-        ></div>
-    );
-};
+        >
+
+        </div>
+    )
+}

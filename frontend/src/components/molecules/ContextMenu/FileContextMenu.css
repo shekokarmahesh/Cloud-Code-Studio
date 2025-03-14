@@ -6,7 +6,7 @@
     height: 30px;
     cursor: pointer;
     background-color: #363545;
-    padding : 5px;
+    padding: 5px;
 }
 
 .fileContextButton:hover {
@@ -17,5 +17,4 @@
     width: 120px;
     position: fixed;
     border: 1.5px solid black;
-
 }

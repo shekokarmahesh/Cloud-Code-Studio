@@ -1,15 +1,16 @@
-import "./FileContextMenu.css";
+import './FileContextMenu.css';
+
 import { useFileContextMenuStore } from "../../../store/fileContextMenuStore";
-import { useEditorSocketStore } from "../../../store/editorSocketStore";
+import { useEditorSocketStore } from '../../../store/editorSocketStore';
+
 export const FileContextMenu = ({
     x,
     y,
     path
 }) => {
+    const { setIsOpen } = useFileContextMenuStore();
 
-    const {setIsOpen} = useFileContextMenuStore();
-    const {editorSocket} = useEditorSocketStore();
-    
+    const { editorSocket } = useEditorSocketStore();
 
     function handleFileDelete(e) {
         e.preventDefault();
@@ -19,40 +20,30 @@ export const FileContextMenu = ({
         });
     }
 
-
-
     return (
         <div
-        onMouseLeave={()=>{
-            console.log("Mouse Left");
-            setIsOpen(false);
-        }}
-        className="fileContextOptionsWrapper"
-        style={{
-            
-            top: y,
-            left: x,
-           
-        }}
+            onMouseLeave={() => {
+                console.log("Mouse left");
+                setIsOpen(false);
+            }}
+            className='fileContextOptionsWrapper'
+            style={{
+                left: x,
+                top: y,
+            }}
         >
             <button
-            className="fileContextButton"
-
-            onClick={handleFileDelete}
+                className='fileContextButton'
+                onClick={handleFileDelete}
             >
                 Delete File
             </button>
             <button
-            className="fileContextButton"
+                className='fileContextButton'
             >
                 Rename File
             </button>
+
         </div>
-
-
     )
 }
-
-
-   
-        

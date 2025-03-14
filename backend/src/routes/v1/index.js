@@ -1,11 +1,9 @@
 import express from 'express';
-// import pingCheck from './ping';
-import projectRouter from './project.js';
-
-
+import { pingCheck } from '../../controllers/pingController.js';
+import projectRouter from './projects.js';
 const router = express.Router();
 
-// router.use('/ping', pingCheck);
+router.use('/ping', pingCheck);
 
 router.use('/projects', projectRouter);
 

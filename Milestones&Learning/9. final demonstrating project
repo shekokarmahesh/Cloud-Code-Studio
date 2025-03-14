@@ -1,0 +1,18 @@
+on making project live
+1. cd frontend  runs on port 5173
+then npm run dev
+2. cd backend   runs on port 3000
+then npm run dev 
+3. cd backend   runs on port 4000
+then node src/terminalApp.js
+these 3 command will run your project
+
+after that when you visit localhost:5173 you will see the project running
+in terminal you can cd sandbox and will able to see the project files in that folder
+to run the project first install node modules by running npm install
+then do npm run dev -- --host 0.0.0.0 to run the project this will run the command in docker container
+and you will be able to load your browser preview window also with that
+//
+but the changes made into any file doesn't get reflected in the browser preview window
+to reflect the changes in the browser preview window you need to restart the project by running the command npm run dev -- --host 0.0.0.0
+//

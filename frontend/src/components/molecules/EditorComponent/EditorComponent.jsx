@@ -1,18 +1,19 @@
 import Editor from '@monaco-editor/react';
 import { useEffect, useState } from 'react';
-import { useEditorSocketStore } from '../../../store/editorSocketStore';
 import { useActiveFileTabStore } from '../../../store/activeFileTabStore';
+import { useEditorSocketStore } from '../../../store/editorSocketStore';
 import { extensionToFileType } from '../../../utils/extensionToFileType';
 
 export const EditorComponent = () => {
 
+    let timerId = null;
     const [editorState, setEditorState] = useState({
         theme: null
     });
 
-    let timerId = null;
-    const {editorSocket} = useEditorSocketStore();
     const { activeFileTab } = useActiveFileTabStore();
+
+    const { editorSocket } = useEditorSocketStore();
 
     async function downloadTheme() {
         const response = await fetch('/Dracula.json');
@@ -27,30 +28,21 @@ export const EditorComponent = () => {
     }
 
     function handleChange(value) {
-        //clear old timer
-        
-        if (timerId) {
+        // Clear old timer
+        if(timerId != null) {
             clearTimeout(timerId);
         }
-       timerId = setTimeout(() => {
+        // set the new timer
+        timerId = setTimeout(() => {
             const editorContent = value;
-            console.log("sending write file");
+            console.log("Sending writefile event");
             editorSocket.emit("writeFile", {
                 data: editorContent,
-                pathToFileorFolder: activeFileTab.path
-            });
+                pathToFileOrFolder: activeFileTab.path
+            })
         }, 2000);
+        
     }
-
-            
-    
-
-    // editorSocket?.on("readFileSuccess", (data) => {
-    //     console.log("Read file success", data);
-    //     setActiveFileTab(data.path, data.value);
-    // })
-
-    //to make this component more clean we have separetededitorSocket to editorSocketStore (zustand store)
 
     useEffect(() => {
         downloadTheme();
@@ -60,9 +52,9 @@ export const EditorComponent = () => {
         <>
             {   editorState.theme &&
                 <Editor 
-                    height={'100vh'}
+                    
                     width={'100%'}
-                    defaultLanguage={ undefined }
+                    defaultLanguage={undefined}
                     defaultValue='// Welcome to the playground'
                     options={{
                         fontSize: 18,

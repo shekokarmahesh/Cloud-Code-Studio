@@ -1,11 +1,13 @@
 import fs from "fs/promises";
+import { getContainerPort } from "../containers/handleContainerCreate.js";
 
 export const handleEditorSocketEvents = (socket, editorNamespace) => {
-    socket.on("writeFile", async ({ data, pathToFileorFolder }) => {
+    socket.on("writeFile", async ({ data, pathToFileOrFolder }) => {
         try {
-            const response = await fs.writeFile(pathToFileorFolder, data);
+            const response = await fs.writeFile(pathToFileOrFolder, data);
             editorNamespace.emit("writeFileSuccess", {
                 data: "File written successfully",
+                path: pathToFileOrFolder,
             })
         } catch(error) {
             console.log("Error writing the file", error);
@@ -15,8 +17,9 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
         }
     });
 
-    socket.on("createFile", async ({ pathToFileorFolder }) => {
-        const isFileAlreadyPresent = await fs.stat(pathToFileorFolder);
+
+    socket.on("createFile", async ({ pathToFileOrFolder }) => {
+        const isFileAlreadyPresent = await fs.stat(pathToFileOrFolder);
         if(isFileAlreadyPresent) {
             socket.emit("error", {
                 data: "File already exists",
@@ -38,33 +41,21 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
     });
 
 
-    socket.on("readFile", async ({ pathToFileorFolder }) => {
+    socket.on("readFile", async ({ pathToFileOrFolder }) => {
         try {
-            console.log("Received path:", pathToFileorFolder); // Debugging line
-    
-            if (!pathToFileorFolder) {
-                throw new Error("Invalid file path received.");
-            }
-    
-            const response = await fs.readFile(pathToFileorFolder);
-            console.log("File content:", response.toString());
-            
-            //this reads file in buffer object this is core CS concept to read file in buffer object due to large chunck of data it reads in buffer object chunck by chunck
-            //to understand it we need to convert it into string
-
-
+            const response = await fs.readFile(pathToFileOrFolder);
+            console.log(response.toString());
             socket.emit("readFileSuccess", {
                 value: response.toString(),
-                path: pathToFileorFolder,
-            });
-        } catch (error) {
-            console.error("Error reading the file", error);
+                path: pathToFileOrFolder,
+            })
+        } catch(error) {
+            console.log("Error reading the file", error);
             socket.emit("error", {
                 data: "Error reading the file",
             });
         }
     });
-    
 
     socket.on("deleteFile", async ({ pathToFileOrFolder }) => {
         try {
@@ -108,20 +99,12 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
         }
     });
 
-
-
-
-    //extra work adding re-naming events for files and folders
-        
-
-    
-
-
-
-
-
-
-
-
+    socket.on("getPort", async ({ containerName }) => {
+        const port = await getContainerPort(containerName);
+        console.log("port data", port);
+        socket.emit("getPortSuccess", {
+            port: port,
+        })
+    })
 
 }
