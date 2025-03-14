@@ -6,14 +6,9 @@ import { AttachAddon } from '@xterm/addon-attach';
 import { useTerminalSocketStore } from '../../../store/terminalSocketStore';
 
 export const BrowserTerminal = () => {
-
     const terminalRef = useRef(null);
-    // const socket = useRef(null);
-    // const {projectId: projectIdFromUrl } = useParams();
-
     const { terminalSocket } = useTerminalSocketStore();
     
-
     useEffect(() => {
         const term = new Terminal({
             cursorBlink: true,
@@ -28,7 +23,7 @@ export const BrowserTerminal = () => {
                 cyan: "#8be9fd",
             },
             fontSize: 16,
-            fontFamily: "Fira Code",
+            fontFamily: "'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Courier New', monospace",
             convertEol: true, // convert CRLF to LF
         });
 
@@ -41,10 +36,8 @@ export const BrowserTerminal = () => {
             terminalSocket.onopen = () => {
                 const attachAddon = new AttachAddon(terminalSocket);
                 term.loadAddon(attachAddon);
-                // socket.current = ws;
             }
         }
-
 
         return () => {
             term.dispose();
@@ -60,8 +53,6 @@ export const BrowserTerminal = () => {
             }}
             className='terminal'
             id="terminal-container"
-        >
-
-        </div>
+        />
     )
 }
